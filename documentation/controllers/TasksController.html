@@ -136,14 +136,14 @@
                 <td class="col-md-4">
                     <b>Decorators : </b>
                     <br />
-                    <code>@Post()<br /></code>
+                    <code>@Post()<br />@UsePipes(ValidationPipe)<br /></code>
                 </td>
             </tr>
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="34"
-                            class="link-to-prism">src/tasks/tasks.controller.ts:34</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="38"
+                            class="link-to-prism">src/tasks/tasks.controller.ts:38</a></div>
                 </td>
             </tr>
 
@@ -219,8 +219,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="47"
-                            class="link-to-prism">src/tasks/tasks.controller.ts:47</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="51"
+                            class="link-to-prism">src/tasks/tasks.controller.ts:51</a></div>
                 </td>
             </tr>
 
@@ -296,8 +296,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="29"
-                            class="link-to-prism">src/tasks/tasks.controller.ts:29</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="32"
+                            class="link-to-prism">src/tasks/tasks.controller.ts:32</a></div>
                 </td>
             </tr>
 
@@ -334,7 +334,7 @@
                     <div>
                     </div>
                     <div class="io-description">
-                        <b>Returns : </b>        <code><a href="../interfaces/Task.html" target="_self" >Task | undefined</a></code>
+                        <b>Returns : </b>        <code><a href="../interfaces/Task.html" target="_self" >Task</a></code>
 
                     </div>
                     <div class="io-description">
@@ -373,8 +373,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="21"
-                            class="link-to-prism">src/tasks/tasks.controller.ts:21</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="24"
+                            class="link-to-prism">src/tasks/tasks.controller.ts:24</a></div>
                 </td>
             </tr>
 
@@ -450,8 +450,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="39"
-                            class="link-to-prism">src/tasks/tasks.controller.ts:39</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="43"
+                            class="link-to-prism">src/tasks/tasks.controller.ts:43</a></div>
                 </td>
             </tr>
 
@@ -523,9 +523,12 @@
   Patch,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from &#x27;@nestjs/common&#x27;;
 import { CreateTaskDto } from &#x27;./dto/create-task.dto&#x27;;
 import { GetTaskAndFilterDto } from &#x27;./dto/get-task-filter.dto&#x27;;
+import { TaskStatusValidationPipe } from &#x27;./pipes/task-status-validation.pipes&#x27;;
 import { Task, TaskStatus } from &#x27;./tasks.model&#x27;;
 import { TasksService } from &#x27;./tasks.service&#x27;;
 
@@ -534,7 +537,7 @@ export class TasksController {
   constructor(private taskService: TasksService) {}
 
   @Get()
-  getTasks(@Query() filterDto: GetTaskAndFilterDto): Task[] {
+  getTasks(@Query(ValidationPipe) filterDto: GetTaskAndFilterDto): Task[] {
     if (Object.keys(filterDto).length) {
       return this.taskService.getTaskAndFilter(filterDto);
     }
@@ -542,11 +545,12 @@ export class TasksController {
   }
 
   @Get(&#x27;/:id&#x27;)
-  getTaskById(@Param(&#x27;id&#x27;) id: string): Task | undefined {
+  getTaskById(@Param(&#x27;id&#x27;) id: string): Task {
     return this.taskService.getTaskById(id);
   }
 
   @Post()
+  @UsePipes(ValidationPipe)
   createTask(@Body() createTaskDto: CreateTaskDto): Task {
     return this.taskService.createTask(createTaskDto);
   }
@@ -554,7 +558,7 @@ export class TasksController {
   @Patch(&#x27;/:id/status&#x27;)
   updateTaskStatus(
     @Param(&#x27;id&#x27;) id: string,
-    @Body(&#x27;status&#x27;) status: TaskStatus,
+    @Body(&#x27;status&#x27;, TaskStatusValidationPipe) status: TaskStatus,
   ): Task {
     return this.taskService.updateTaskStatus(id, status);
   }

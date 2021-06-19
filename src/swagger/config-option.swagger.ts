@@ -1,4 +1,8 @@
-import { SwaggerCustomOptions, SwaggerDocumentOptions } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
 
 export const options: SwaggerDocumentOptions = {
   /**
@@ -16,3 +20,10 @@ export const customOptions: SwaggerCustomOptions = {
     persistAuthorization: true,
   },
 };
+
+export const config = new DocumentBuilder()
+  .setTitle('NestJS Tasks Manager Api')
+  .setDescription('Tasks Manager API description')
+  .setVersion('1.0')
+  .addTag('Tasks Manager')
+  .build();

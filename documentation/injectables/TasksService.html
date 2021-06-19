@@ -148,8 +148,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="38"
-                            class="link-to-prism">src/tasks/tasks.service.ts:38</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="44"
+                            class="link-to-prism">src/tasks/tasks.service.ts:44</a></div>
                 </td>
             </tr>
 
@@ -218,8 +218,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="63"
-                            class="link-to-prism">src/tasks/tasks.service.ts:63</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="69"
+                            class="link-to-prism">src/tasks/tasks.service.ts:69</a></div>
                 </td>
             </tr>
 
@@ -467,8 +467,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="52"
-                            class="link-to-prism">src/tasks/tasks.service.ts:52</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="58"
+                            class="link-to-prism">src/tasks/tasks.service.ts:58</a></div>
                 </td>
             </tr>
 
@@ -572,7 +572,7 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@nestjs/common&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException } from &#x27;@nestjs/common&#x27;;
 import { Task, TaskStatus } from &#x27;./tasks.model&#x27;;
 import { uuid } from &#x27;uuidv4&#x27;;
 import { CreateTaskDto } from &#x27;./dto/create-task.dto&#x27;;
@@ -606,7 +606,13 @@ export class TasksService {
   }
 
   getTaskById(id: string): Task | undefined {
-    return this.tasks.find((task) &#x3D;&gt; task.id &#x3D;&#x3D;&#x3D; id);
+    const task &#x3D; this.tasks.find((task) &#x3D;&gt; task.id &#x3D;&#x3D;&#x3D; id);
+
+    if (!task) {
+      throw new NotFoundException(&#x60;Task with id: ${id} not found&#x60;);
+    }
+
+    return task;
   }
 
   createTask(createTaskDto: CreateTaskDto): Task {
@@ -635,7 +641,8 @@ export class TasksService {
   }
 
   deleteTask(id: string): Task[] {
-    this.tasks &#x3D; this.tasks.filter((task) &#x3D;&gt; task.id !&#x3D;&#x3D; id);
+    const foundTask &#x3D; this.getTaskById(id);
+    this.tasks &#x3D; this.tasks.filter((task) &#x3D;&gt; task.id !&#x3D;&#x3D; foundTask.id);
     return this.tasks;
   }
 }
